@@ -1,5 +1,5 @@
 const fs = require('fs');
-const {execute} = require('./utilities.js');
+const {execute} = require('./utilitiesBash.js');
 
 const main = function() {
   const commandsFile = process.argv[2];
