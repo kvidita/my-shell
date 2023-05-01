@@ -3,17 +3,15 @@ const {execute} = require('./utilitiesBash.js');
 
 const main = function() {
   const commandsFile = process.argv[2];
-  const content = fs.readFileSync(commandsFile, 'utf-8').trim();
-  const commands = content.split("\n");
-  let pwd = process.env.PWD;
 
   if(!fs.existsSync(commandsFile)) {
-    console.log("error: file does not exist");
-    return 0;
+    console.log("error: source file does not exist");
+    process.exit(1);
   }
+  const content = fs.readFileSync(commandsFile, 'utf-8').trim();
+  const commands = content.split("\n");
 
-  execute(commands, pwd);
-
+  execute(commands);
 }
 
 main();

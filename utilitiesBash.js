@@ -2,54 +2,62 @@ const fs = require('fs');
 
 const pwd = function(PWD, args) {
   if(args === '') {
-    presentWorkingDir = PWD;
-    return [presentWorkingDir, presentWorkingDir];
+    const presentWorkingDir = PWD;
+    return {pwd: presentWorkingDir, output: presentWorkingDir};
   }
-}
+};
 
 const ls = function(PWD, args) {
   const entries = (fs.readdirSync(PWD + '/' + args));
-  const output = [PWD, entries];
-  return output;
-}
+  return {pwd: PWD, output: entries};
+};
 
 const cd = function(PWD, args) {
   const changedDir = PWD + '/' + args;
-  const output = [changedDir, changedDir]
-  return output;
-}
+  return {pwd: changedDir};
+};
 
-const command = {pwd: pwd, ls: ls, cd: cd};
+const command = {
+  pwd: pwd, 
+  ls: ls, 
+  cd: cd
+};
 
 const commandsPropertries = function(script) {
-  const commandProperties = {}
   const commands = script.split(' ');
-  commandProperties.name = commands[0];
-  commandProperties.args = commands.splice(1).join(" ");
+  const commandProperties = {
+    name: commands[0], 
+    args: commands.slice(1).join(' ')
+  };
+
   return commandProperties;
 }
 
 const executeInstruction  = function(instruction, args, PWD) {
-  const executedCommands = command[instruction](PWD, args);
-  return executedCommands;
+  return executedCommands = command[instruction](PWD, args);
+}
+
+const displayOutput = function(outputs) {
+  const output = [];
+
+  for(let commandOutput of outputs) {
+    commandOutput === undefined ? output : output.push(commandOutput);
+  }
+  return output;
 }
 
 const execute = function(instructions) {
   let PWD = process.env.PWD;
   const commandOutput = [];
+
   for(const instruction of instructions) {
     const command = commandsPropertries(instruction);
-    output = executeInstruction(command.name, command.args, PWD);
-    PWD = output[0];
-    console.log(PWD, "hello");
-    commandOutput.push(output[1]);
-  }
-  console.log(commandOutput);
-}
+    const processOutput = executeInstruction(command.name, command.args, PWD);
+    PWD = processOutput.pwd;
+    commandOutput.push(processOutput.output);
+  }  
 
-execute(['ls direct']);
-execute(['pwd']);
-execute(['cd direct']);
-execute(['pwd']);
+  console.log(displayOutput(commandOutput));
+}
 
 exports.execute = execute;
